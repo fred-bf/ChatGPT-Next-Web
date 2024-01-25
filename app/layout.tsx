@@ -7,6 +7,8 @@ import { type Metadata } from "next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { getServerSideConfig } from "./config/server";
 import { GoogleTagManager } from "@next/third-parties/google";
+import ThemeProvider from "@/components/provider/theme";
+import '@/app/globals.css'
 const serverConfig = getServerSideConfig();
 
 export const metadata: Metadata = {
@@ -40,7 +42,10 @@ export default function RootLayout({
         <script src="/serviceWorkerRegister.js" defer></script>
       </head>
       <body>
-        {children}
+        <ThemeProvider> 
+          {children}
+        </ThemeProvider>
+       
         {serverConfig?.isVercel && (
           <>
             <SpeedInsights />

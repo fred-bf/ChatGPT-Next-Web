@@ -28,7 +28,11 @@ const id: PartialLocaleType = {
       Stop: "Berhenti",
       Retry: "Coba Lagi",
       Pin: "Pin",
-      PinToastContent: "2 pesan telah ditandai",
+      PinToastcontent: [{
+        type: "text",
+        text: "2 pesan telah ditandai"
+      }]
+      ,
       PinToastAction: "Lihat",
       Delete: "Hapus",
       Edit: "Edit",
@@ -99,7 +103,11 @@ const id: PartialLocaleType = {
   },
   Memory: {
     Title: "Prompt Memori",
-    EmptyContent: "Belum ada yang tersedia.",
+    Emptycontent: [{
+      type: "text",
+      text: "Belum ada yang tersedia."
+    }]
+    ,
     Send: "Kirim Memori",
     Copy: "Salin Memori",
     Reset: "Reset",
@@ -370,7 +378,7 @@ const id: PartialLocaleType = {
   Exporter: {
     Description: {
       Title: "Hanya pesan setelah menghapus konteks yang akan ditampilkan"
-    },  
+    },
     Model: "Model",
     Messages: "Pesan",
     Topic: "Topik",

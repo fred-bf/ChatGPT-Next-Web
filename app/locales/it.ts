@@ -45,7 +45,11 @@ const it: PartialLocaleType = {
   },
   Memory: {
     Title: "Prompt di memoria",
-    EmptyContent: "Vuoto.",
+    Emptycontent: [{
+      type: "text",
+      text: "Vuoto."
+    }]
+    ,
     Copy: "Copia tutto",
     Send: "Send Memory",
     Reset: "Reset Session",

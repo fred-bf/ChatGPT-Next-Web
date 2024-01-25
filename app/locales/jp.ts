@@ -50,7 +50,11 @@ const jp: PartialLocaleType = {
   },
   Memory: {
     Title: "履歴メモリ",
-    EmptyContent: "まだ記憶されていません",
+    Emptycontent: [{
+      type: "text",
+      text: "まだ記憶されていません"
+    }]
+    ,
     Send: "メモリを送信",
     Copy: "メモリをコピー",
     Reset: "チャットをリセット",

@@ -38,7 +38,11 @@ const cn = {
       Stop: "停止",
       Retry: "重试",
       Pin: "固定",
-      PinToastContent: "已将 1 条对话固定至预设提示词",
+      PinToastcontent: [{
+        type: "text",
+        text: "已将 1 条对话固定至预设提示词"
+      }]
+      ,
       PinToastAction: "查看",
       Delete: "删除",
       Edit: "编辑",
@@ -112,7 +116,11 @@ const cn = {
   },
   Memory: {
     Title: "历史摘要",
-    EmptyContent: "对话内容过短，无需总结",
+    Emptycontent: [{
+      type: "text",
+      text: "对话内容过短，无需总结"
+    }]
+    ,
     Send: "自动压缩聊天记录并作为上下文发送",
     Copy: "复制摘要",
     Reset: "[unused]",
@@ -470,8 +478,8 @@ const cn = {
 
 type DeepPartial<T> = T extends object
   ? {
-      [P in keyof T]?: DeepPartial<T[P]>;
-    }
+    [P in keyof T]?: DeepPartial<T[P]>;
+  }
   : T;
 
 export type LocaleType = typeof cn;

@@ -45,7 +45,11 @@ const es: PartialLocaleType = {
   },
   Memory: {
     Title: "Historial de memoria",
-    EmptyContent: "Aún no hay nada.",
+    Emptycontent: [{
+      type: "text",
+      text: "Aún no hay nada."
+    }]
+    ,
     Copy: "Copiar todo",
     Send: "Send Memory",
     Reset: "Reset Session",

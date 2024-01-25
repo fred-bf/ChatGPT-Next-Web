@@ -45,7 +45,11 @@ const tr: PartialLocaleType = {
   },
   Memory: {
     Title: "Bellek Komutları",
-    EmptyContent: "Henüz değil.",
+    Emptycontent: [{
+      type: "text",
+      text: "Henüz değil."
+    }]
+    ,
     Send: "Belleği Gönder",
     Copy: "Belleği Kopyala",
     Reset: "Oturumu Sıfırla",

@@ -45,7 +45,11 @@ const de: PartialLocaleType = {
   },
   Memory: {
     Title: "Gedächtnis-Prompt",
-    EmptyContent: "Noch nichts.",
+    Emptycontent: [{
+      type: "text",
+      text: "Noch nichts."
+    }]
+    ,
     Send: "Gedächtnis senden",
     Copy: "Gedächtnis kopieren",
     Reset: "Sitzung zurücksetzen",

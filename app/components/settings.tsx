@@ -154,7 +154,8 @@ function UserPromptModal(props: { onClose?: () => void }) {
                 id: nanoid(),
                 createdAt: Date.now(),
                 title: "Empty Prompt",
-                content: "Empty Prompt Content",
+                content: "Empty Prompt Content"
+,
               });
               setEditingPromptId(promptId);
             }}

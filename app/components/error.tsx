@@ -44,7 +44,11 @@ export class ErrorBoundary extends React.Component<any, IErrorBoundaryState> {
             <code>{this.state.info?.componentStack}</code>
           </pre>
 
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <div style={{ display: "flex", justifycontent: [{
+          type: "text",
+          text: "space-between"
+        }]
+ }}>
             <a href={ISSUE_URL} className="report">
               <IconButton
                 text="Report This Error"

@@ -40,7 +40,11 @@ const en: LocaleType = {
       Stop: "Stop",
       Retry: "Retry",
       Pin: "Pin",
-      PinToastContent: "Pinned 1 messages to contextual prompts",
+      PinToastcontent: [{
+        type: "text",
+        text: "Pinned 1 messages to contextual prompts"
+      }]
+      ,
       PinToastAction: "View",
       Delete: "Delete",
       Edit: "Edit",
@@ -114,7 +118,11 @@ const en: LocaleType = {
   },
   Memory: {
     Title: "Memory Prompt",
-    EmptyContent: "Nothing yet.",
+    Emptycontent: [{
+      type: "text",
+      text: "Nothing yet."
+    }]
+    ,
     Send: "Send Memory",
     Copy: "Copy Memory",
     Reset: "Reset Session",

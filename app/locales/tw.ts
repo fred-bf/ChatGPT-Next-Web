@@ -44,7 +44,11 @@ const tw: PartialLocaleType = {
   },
   Memory: {
     Title: "上下文記憶 Prompt",
-    EmptyContent: "尚未記憶",
+    Emptycontent: [{
+      type: "text",
+      text: "尚未記憶"
+    }]
+    ,
     Copy: "複製全部",
     Send: "傳送記憶",
     Reset: "重設對話",

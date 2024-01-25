@@ -85,7 +85,11 @@ const ar: PartialLocaleType = {
   },
   Memory: {
     Title: "اقتراحات الذاكرة",
-    EmptyContent: "لا شيء حتى الآن.",
+    Emptycontent: [{
+      type: "text",
+      text: "لا شيء حتى الآن."
+    }]
+    ,
     Send: "إرسال الذاكرة",
     Copy: "نسخ الذاكرة",
     Reset: "إعادة التعيين",

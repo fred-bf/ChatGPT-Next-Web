@@ -45,7 +45,11 @@ const cs: PartialLocaleType = {
   },
   Memory: {
     Title: "Pokyn z paměti",
-    EmptyContent: "Zatím nic.",
+    Emptycontent: [{
+      type: "text",
+      text: "Zatím nic."
+    }]
+    ,
     Send: "Odeslat paměť",
     Copy: "Kopírovat paměť",
     Reset: "Obnovit relaci",

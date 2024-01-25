@@ -128,7 +128,7 @@ export const useAppConfig = createPersistStore(
       }));
     },
 
-    allModels() {},
+    allModels() { },
   }),
   {
     name: StoreKey.Config,

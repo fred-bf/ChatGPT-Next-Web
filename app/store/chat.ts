@@ -27,12 +27,27 @@ export type ChatMessage = RequestMessage & {
   model?: ModelType;
 };
 
+export type ChatContent = {
+  type: "text",
+  text: string,
+} | {
+  type: "image_url",
+  image_url: ChatContentImageUrl,
+}
+
+export type ChatContentImageUrl = {
+  url: string
+}
+
 export function createMessage(override: Partial<ChatMessage>): ChatMessage {
   return {
     id: nanoid(),
     date: new Date().toLocaleString(),
     role: "user",
-    content: "",
+    content: [{
+      type: "text",
+      text: ""
+    }],
     ...override,
   };
 }
@@ -60,7 +75,10 @@ export interface ChatSession {
 export const DEFAULT_TOPIC = Locale.Store.DefaultTopic;
 export const BOT_HELLO: ChatMessage = createMessage({
   role: "assistant",
-  content: Locale.Store.BotHello,
+  content: [{
+    type: "text",
+    text: Locale.Store.BotHello
+  }],
 });
 
 function createEmptySession(): ChatSession {
@@ -267,16 +285,21 @@ export const useChatStore = createPersistStore(
         get().summarizeSession();
       },
 
-      async onUserInput(content: string) {
+      async onUserInput(content: ChatContent[]) {
         const session = get().currentSession();
         const modelConfig = session.mask.modelConfig;
 
-        const userContent = fillTemplateWith(content, modelConfig);
-        console.log("[User Input] after template: ", userContent);
+
+        content.filter((c) => c.type === "text").forEach((c) => {
+          if (c.type === "text") {
+            c.text = fillTemplateWith(c.text, modelConfig);
+          }
+        })
+        console.log("[User Input] after template: ", content);
 
         const userMessage: ChatMessage = createMessage({
           role: "user",
-          content: userContent,
+          content: content,
         });
 
         const botMessage: ChatMessage = createMessage({
@@ -303,7 +326,7 @@ export const useChatStore = createPersistStore(
         });
 
         var api: ClientApi;
-        if (modelConfig.model === "gemini-pro") {
+        if (modelConfig.model.includes("gemini-pro")) {
           api = new ClientApi(ModelProvider.GeminiPro);
         } else {
           api = new ClientApi(ModelProvider.GPT);
@@ -393,14 +416,14 @@ export const useChatStore = createPersistStore(
         var systemPrompts: ChatMessage[] = [];
         systemPrompts = shouldInjectSystemPrompts
           ? [
-              createMessage({
-                role: "system",
-                content: fillTemplateWith("", {
-                  ...modelConfig,
-                  template: DEFAULT_SYSTEM_TEMPLATE,
-                }),
+            createMessage({
+              role: "system",
+              content: fillTemplateWith("", {
+                ...modelConfig,
+                template: DEFAULT_SYSTEM_TEMPLATE,
               }),
-            ]
+            }),
+          ]
           : [];
         if (shouldInjectSystemPrompts) {
           console.log(
@@ -488,7 +511,7 @@ export const useChatStore = createPersistStore(
         const modelConfig = session.mask.modelConfig;
 
         var api: ClientApi;
-        if (modelConfig.model === "gemini-pro") {
+        if (modelConfig.model.includes("gemini-pro")) {
           api = new ClientApi(ModelProvider.GeminiPro);
         } else {
           api = new ClientApi(ModelProvider.GPT);
@@ -518,8 +541,8 @@ export const useChatStore = createPersistStore(
             onFinish(message) {
               get().updateCurrentSession(
                 (session) =>
-                  (session.topic =
-                    message.length > 0 ? trimTopic(message) : DEFAULT_TOPIC),
+                (session.topic =
+                  message.length > 0 ? trimTopic(message) : DEFAULT_TOPIC),
               );
             },
           });
@@ -611,7 +634,7 @@ export const useChatStore = createPersistStore(
   },
   {
     name: StoreKey.Chat,
-    version: 3.1,
+    version: 3.3,
     migrate(persistedState, version) {
       const state = persistedState as any;
       const newState = JSON.parse(
@@ -631,6 +654,7 @@ export const useChatStore = createPersistStore(
           newSession.mask.modelConfig.compressMessageLengthThreshold = 1000;
           newState.sessions.push(newSession);
         }
+        version = 2;
       }
 
       if (version < 3) {
@@ -639,6 +663,7 @@ export const useChatStore = createPersistStore(
           s.id = nanoid();
           s.messages.forEach((m) => (m.id = nanoid()));
         });
+        version = 3
       }
 
       // Enable `enableInjectSystemPrompts` attribute for old sessions.
@@ -656,6 +681,34 @@ export const useChatStore = createPersistStore(
               config.modelConfig.enableInjectSystemPrompts;
           }
         });
+        version = 3.1
+      }
+
+
+      // CHange Chat Message Defination
+      if (version < 3.3) {
+        newState.sessions = [];
+
+        const oldSessions = state.sessions;
+        for (const oldSession of oldSessions) {
+          const newSession = createEmptySession();
+          newSession.topic = oldSession.topic;
+          console.log(oldSession)
+          newSession.messages = oldSession.messages.map(
+            (m) => {
+              if (typeof m.content === "string") {
+                m.content = [{
+                  type: "text",
+                  text: m.content
+                }]
+              }
+              return m
+            }
+          )
+
+          newState.sessions.push(newSession);
+        }
+        version = 3.3
       }
 
       return newState as any;

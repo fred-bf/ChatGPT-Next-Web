@@ -45,7 +45,11 @@ const ru: PartialLocaleType = {
   },
   Memory: {
     Title: "Память",
-    EmptyContent: "Пусто.",
+    Emptycontent: [{
+      type: "text",
+      text: "Пусто."
+    }]
+    ,
     Send: "Отправить память",
     Copy: "Копировать память",
     Reset: "Сбросить сессию",
@@ -204,8 +208,7 @@ const ru: PartialLocaleType = {
     },
     EditModal: {
       Title: (readonly: boolean) =>
-        `Редактирование шаблона подсказки ${
-          readonly ? "(только для чтения)" : ""
+        `Редактирование шаблона подсказки ${readonly ? "(только для чтения)" : ""
         }`,
       Download: "Скачать",
       Clone: "Клонировать",

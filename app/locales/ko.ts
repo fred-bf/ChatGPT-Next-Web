@@ -46,7 +46,11 @@ const ko: PartialLocaleType = {
   },
   Memory: {
     Title: "기억 프롬프트",
-    EmptyContent: "아직 내용이 없습니다.",
+    Emptycontent: [{
+      type: "text",
+      text: "아직 내용이 없습니다."
+    }]
+    ,
     Send: "기억 보내기",
     Copy: "기억 복사",
     Reset: "세션 재설정",

@@ -1,15 +1,24 @@
 import { Google, REQUEST_TIMEOUT_MS } from "@/app/constant";
 import { ChatOptions, getHeaders, LLMApi, LLMModel, LLMUsage } from "../api";
-import { useAccessStore, useAppConfig, useChatStore } from "@/app/store";
-import {
-  EventStreamContentType,
-  fetchEventSource,
-} from "@fortaine/fetch-event-source";
-import { prettyObject } from "@/app/utils/format";
-import { getClientConfig } from "@/app/config/client";
-import Locale from "../../locales";
-import { getServerSideConfig } from "@/app/config/server";
-import de from "@/app/locales/de";
+import { ChatContent, useAccessStore, useAppConfig, useChatStore } from "@/app/store";
+import { ChatMessage } from "@/app/store";
+
+function CoverChatBlockToGeminiParts(messages: ChatContent[]) {
+  return messages.map((msg) => {
+    if (msg.type === "text") {
+      return { text: msg.text }
+    }
+
+    if (msg.type === "image_url") {
+      return {
+        "inline_data": {
+          "mime_type": "image/jpeg",
+          "data": msg.image_url
+        }
+      }
+    }
+  })
+}
 export class GeminiProApi implements LLMApi {
   extractMessage(res: any) {
     console.log("[Response] gemini-pro response: ", res);
@@ -24,11 +33,11 @@ export class GeminiProApi implements LLMApi {
     const apiClient = this;
     const messages = options.messages.map((v) => ({
       role: v.role.replace("assistant", "model").replace("system", "user"),
-      parts: [{ text: v.content }],
+      parts: CoverChatBlockToGeminiParts(v.content),
     }));
 
     // google requires that role in neighboring messages must not be the same
-    for (let i = 0; i < messages.length - 1; ) {
+    for (let i = 0; i < messages.length - 1;) {
       // Check if current and next item both have the role "model"
       if (messages[i].role === messages[i + 1].role) {
         // Concatenate the 'parts' of the current and next item
@@ -195,7 +204,7 @@ export class GeminiProApi implements LLMApi {
           options.onError?.(
             new Error(
               "Message is being blocked for reason: " +
-                resJson.promptFeedback.blockReason,
+              resJson.promptFeedback.blockReason,
             ),
           );
         }

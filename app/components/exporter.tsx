@@ -270,7 +270,13 @@ export function RenderExport(props: {
       return {
         id: i.toString(),
         role: role as any,
-        content: role === "user" ? v.textContent ?? "" : v.innerHTML,
+        content: role === "user" ? [{
+          type: "text",
+          text: v.textContent
+        }] ?? "" : [{
+          type: "text",
+          text: v.innerHTML
+        }],
         date: "",
       };
     });
@@ -307,7 +313,7 @@ export function PreviewActions(props: {
     setShouldExport(false);
 
     var api: ClientApi;
-    if (config.modelConfig.model === "gemini-pro") {
+    if (config.modelConfig.model.includes("gemini-pro")) {
       api = new ClientApi(ModelProvider.GeminiPro);
     } else {
       api = new ClientApi(ModelProvider.GPT);
@@ -601,11 +607,16 @@ export function MarkdownPreviewer(props: {
     `# ${props.topic}\n\n` +
     props.messages
       .map((m) => {
+        m.content.map((content) => { 
+          return 
+        })
+
         return m.role === "user"
           ? `## ${Locale.Export.MessageFromYou}:\n${m.content}`
           : `## ${Locale.Export.MessageFromChatGPT}:\n${m.content.trim()}`;
       })
       .join("\n\n");
+
 
   const copy = () => {
     copyToClipboard(mdText);

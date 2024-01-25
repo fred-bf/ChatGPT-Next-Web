@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { useDebouncedCallback } from "use-debounce";
 import React, {
   useState,
@@ -7,7 +8,9 @@ import React, {
   useCallback,
   Fragment,
 } from "react";
-
+import { ChangeEvent } from "react";
+import Tooltip from "@/components/chat/tooltip";
+import UploadButton from "@/components/chat/uploadButton";
 import SendWhiteIcon from "../icons/send-white.svg";
 import BrainIcon from "../icons/brain.svg";
 import RenameIcon from "../icons/rename.svg";
@@ -46,6 +49,7 @@ import {
   useAppConfig,
   DEFAULT_TOPIC,
   ModelType,
+  ChatContent,
 } from "../store";
 
 import {
@@ -89,6 +93,7 @@ import { prettyObject } from "../utils/format";
 import { ExportMessageModal } from "./exporter";
 import { getClientConfig } from "../config/client";
 import { useAllModels } from "../utils/hooks";
+import classNames from "classnames";
 
 const Markdown = dynamic(async () => (await import("./markdown")).Markdown, {
   loading: () => <LoadingIcon />,
@@ -350,28 +355,27 @@ function ChatAction(props: {
   }
 
   return (
-    <div
-      className={`${styles["chat-input-action"]} clickable`}
-      onClick={() => {
-        props.onClick();
-        setTimeout(updateWidth, 1);
-      }}
-      onMouseEnter={updateWidth}
-      onTouchStart={updateWidth}
-      style={
-        {
-          "--icon-width": `${width.icon}px`,
-          "--full-width": `${width.full}px`,
-        } as React.CSSProperties
-      }
-    >
-      <div ref={iconRef} className={styles["icon"]}>
-        {props.icon}
+    <Tooltip content={props.text}>
+      <div
+        onClick={() => {
+          props.onClick();
+          setTimeout(updateWidth, 1);
+        }}
+        onMouseEnter={updateWidth}
+        onTouchStart={updateWidth}
+        style={
+          {
+            "--icon-width": `${width.icon}px`,
+            "--full-width": `${width.full}px`,
+          } as React.CSSProperties
+        }
+        className="flex items-center justify-center h-6 px-2 py-1 transition-all border hover:bg-zinc-400/30 clickable border-zinc-300 dark:border-zinc-600 rounded-xl"
+      >
+        <div ref={iconRef} className="w-4 h-4" >
+          {props.icon}
+        </div>
       </div>
-      <div className={styles["text"]} ref={textRef}>
-        {props.text}
-      </div>
-    </div>
+    </Tooltip>
   );
 }
 
@@ -452,7 +456,7 @@ export function ChatActions(props: {
   }, [chatStore, currentModel, models]);
 
   return (
-    <div className={styles["chat-input-actions"]}>
+    <div className={classNames(styles["chat-input-actions"],'flex gap-2 mb-2')}>
       {couldStop && (
         <ChatAction
           onClick={stopAll}
@@ -705,7 +709,23 @@ function _Chat() {
       return;
     }
     setIsLoading(true);
-    chatStore.onUserInput(userInput).then(() => setIsLoading(false));
+
+    // check if user have uploaded the image
+    let input: ChatContent[]= [{
+      type: "text",
+      text: userInput
+    }]
+
+    if (base64) {
+      input = input.concat([{
+          type: "image_url",
+          "image_url": {
+            url: base64
+          },
+      }])
+    }
+
+    chatStore.onUserInput(input).then(() => setIsLoading(false));
     localStorage.setItem(LAST_INPUT_KEY, userInput);
     setUserInput("");
     setPromptHints([]);
@@ -896,7 +916,10 @@ function _Chat() {
               {
                 ...createMessage({
                   role: "assistant",
-                  content: "……",
+                  content: [{
+                    type: "text",
+                    text: "……"
+                  }],
                 }),
                 preview: true,
               },
@@ -909,7 +932,10 @@ function _Chat() {
               {
                 ...createMessage({
                   role: "user",
-                  content: userInput,
+                  content: [{
+                    type: "text",
+                    text: "……"
+                  }],
                 }),
                 preview: true,
               },
@@ -940,6 +966,7 @@ function _Chat() {
     );
     return renderMessages.slice(msgRenderIndex, endRenderIndex);
   }, [msgRenderIndex, renderMessages]);
+
 
   const onChatBodyScroll = (e: HTMLElement) => {
     const bottomHeight = e.scrollTop + e.clientHeight;
@@ -980,6 +1007,23 @@ function _Chat() {
 
   const autoFocus = !isMobileScreen; // wont auto focus on mobile screen
   const showMaxIcon = !isMobileScreen && !clientConfig?.isApp;
+  const [base64, setBase64] = useState('');
+
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    if (!event.target.files) return;
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        if (e.target) {
+          if (typeof e.target.result === "string") {
+            setBase64(e.target.result);
+          }
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   useCommand({
     fill: setUserInput,
@@ -1188,7 +1232,7 @@ function _Chat() {
 
                     {showActions && (
                       <div className={styles["chat-message-actions"]}>
-                        <div className={styles["chat-input-actions"]}>
+                        <div className={classNames(styles["chat-input-actions"],'flex gap-2')}>
                           {message.streaming ? (
                             <ChatAction
                               text={Locale.Chat.Actions.Stop}
@@ -1230,30 +1274,41 @@ function _Chat() {
                       {Locale.Chat.Typing}
                     </div>
                   )}
-                  <div className={styles["chat-message-item"]}>
-                    <Markdown
-                      content={message.content}
-                      loading={
-                        (message.preview || message.streaming) &&
-                        message.content.length === 0 &&
-                        !isUser
-                      }
-                      onContextMenu={(e) => onRightClick(e, message)}
-                      onDoubleClickCapture={() => {
-                        if (!isMobileScreen) return;
-                        setUserInput(message.content);
-                      }}
-                      fontSize={fontSize}
-                      parentRef={scrollRef}
-                      defaultShow={i >= messages.length - 6}
-                    />
-                  </div>
+                  {JSON.stringify(message.content)}
+                  {/* {message.content.map((content) => {
+                    if (content.type === "image_url") {
+                      return <div className={styles["chat-message-item"]}>
+                        <img className={styles["chat-message-image"]} src={content.image_url.url} alt="Uploaded" />
+                      </div>
+                    }
 
-                  <div className={styles["chat-message-action-date"]}>
-                    {isContext
-                      ? Locale.Chat.IsContext
-                      : message.date.toLocaleString()}
-                  </div>
+                    return <>
+                          <div className={styles["chat-message-item"]}>
+                          <Markdown
+                            content={content.text}
+                            loading={
+                              (message.preview || message.streaming) &&
+                              message.content.length === 0 &&
+                              !isUser
+                            }
+                            onContextMenu={(e) => onRightClick(e, message)}
+                            onDoubleClickCapture={() => {
+                              if (!isMobileScreen) return;
+                              setUserInput(content.text);
+                            }}
+                            fontSize={fontSize}
+                            parentRef={scrollRef}
+                            defaultShow={i >= messages.length - 6}
+                          />
+                        </div>
+
+                        <div className={styles["chat-message-action-date"]}>
+                          {isContext
+                            ? Locale.Chat.IsContext
+                            : message.date.toLocaleString()}
+                      </div>
+                    </>
+                   }) } */}
                 </div>
               </div>
               {shouldShowClearContextDivider && <ClearContextDivider />}
@@ -1282,28 +1337,39 @@ function _Chat() {
           }}
         />
         <div className={styles["chat-input-panel-inner"]}>
-          <textarea
-            ref={inputRef}
-            className={styles["chat-input"]}
-            placeholder={Locale.Chat.Input(submitKey)}
-            onInput={(e) => onInput(e.currentTarget.value)}
-            value={userInput}
-            onKeyDown={onInputKeyDown}
-            onFocus={scrollToBottom}
-            onClick={scrollToBottom}
-            rows={inputRows}
-            autoFocus={autoFocus}
-            style={{
-              fontSize: config.fontSize,
-            }}
-          />
-          <IconButton
-            icon={<SendWhiteIcon />}
-            text={Locale.Chat.Send}
-            className={styles["chat-input-send"]}
-            type="primary"
-            onClick={() => doSubmit(userInput)}
-          />
+          <div className="w-full h-fit">
+            <textarea
+              ref={inputRef}
+              className={styles["chat-input"]}
+              placeholder={Locale.Chat.Input(submitKey)}
+              onInput={(e) => onInput(e.currentTarget.value)}
+              value={userInput}
+              onKeyDown={onInputKeyDown}
+              onFocus={scrollToBottom}
+              onClick={scrollToBottom}
+              rows={inputRows}
+              autoFocus={autoFocus}
+              style={{
+                fontSize: config.fontSize,
+              }}
+            />
+            {base64 && <div>
+              <img className="absolute w-auto max-h-8 left-8 bottom-8" src={base64} alt="Uploaded" />
+            </div>}
+          </div>
+           
+          <div className="absolute right-8 bottom-8">
+            <div className="flex items-center gap-4">
+ 
+              {!base64 && <UploadButton onChange={handleFileChange}/>}
+              <IconButton
+                icon={<SendWhiteIcon />}
+                text={Locale.Chat.Send}
+                type="primary"
+                onClick={() => doSubmit(userInput)}
+              />
+            </div>
+          </div>
         </div>
       </div>
 

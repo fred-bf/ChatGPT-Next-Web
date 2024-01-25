@@ -39,7 +39,11 @@ const pt: PartialLocaleType = {
       Stop: "Parar",
       Retry: "Tentar Novamente",
       Pin: "Fixar",
-      PinToastContent: "Fixada 1 mensagem para prompts contextuais",
+      PinToastcontent: [{
+        type: "text",
+        text: "Fixada 1 mensagem para prompts contextuais"
+      }]
+      ,
       PinToastAction: "Visualizar",
       Delete: "Deletar",
       Edit: "Editar",
@@ -114,7 +118,11 @@ const pt: PartialLocaleType = {
   },
   Memory: {
     Title: "Prompt de Memória",
-    EmptyContent: "Nada ainda.",
+    Emptycontent: [{
+      type: "text",
+      text: "Nada ainda."
+    }]
+    ,
     Send: "Enviar Memória",
     Copy: "Copiar Memória",
     Reset: "Resetar Sessão",

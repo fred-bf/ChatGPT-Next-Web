@@ -258,7 +258,10 @@ function ContextPromptItem(props: {
         onInput={(e) =>
           props.update({
             ...props.prompt,
-            content: e.currentTarget.value as any,
+            content: [{
+              type: "text",
+              text:e.currentTarget.value
+            }]
           })
         }
       />
@@ -337,7 +340,10 @@ export function ContextPrompts(props: {
                             addContextPrompt(
                               createMessage({
                                 role: "user",
-                                content: "",
+                                content: [{
+                                  type: "text",
+                                  text:""
+                                }],
                                 date: new Date().toLocaleString(),
                               }),
                               i + 1,
@@ -367,7 +373,10 @@ export function ContextPrompts(props: {
                 addContextPrompt(
                   createMessage({
                     role: "user",
-                    content: "",
+                    content: [{
+                      type: "text",
+                      text:""
+                    }],
                     date: "",
                   }),
                   props.context.length,

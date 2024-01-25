@@ -45,7 +45,11 @@ const vi: PartialLocaleType = {
   },
   Memory: {
     Title: "Lịch sử tin nhắn",
-    EmptyContent: "Chưa có tin nhắn",
+    Emptycontent: [{
+      type: "text",
+      text: "Chưa có tin nhắn"
+    }]
+    ,
     Send: "Gửi tin nhắn trong quá khứ",
     Copy: "Sao chép tin nhắn trong quá khứ",
     Reset: "Đặt lại phiên",

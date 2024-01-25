@@ -41,7 +41,11 @@ const sk: PartialLocaleType = {
       Stop: "Zastaviť",
       Retry: "Skúsiť znova",
       Pin: "Pripnúť",
-      PinToastContent: "Pripnuté 1 správy do kontextových výziev",
+      PinToastcontent: [{
+        type: "text",
+        text: "Pripnuté 1 správy do kontextových výziev"
+      }]
+      ,
       PinToastAction: "Zobraziť",
       Delete: "Vymazať",
       Edit: "Upraviť",
@@ -116,7 +120,11 @@ const sk: PartialLocaleType = {
   },
   Memory: {
     Title: "Výzva pamäti",
-    EmptyContent: "Zatiaľ nič.",
+    Emptycontent: [{
+      type: "text",
+      text: "Zatiaľ nič."
+    }]
+    ,
     Send: "Odoslať pamäť",
     Copy: "Kopírovať pamäť",
     Reset: "Resetovať reláciu",

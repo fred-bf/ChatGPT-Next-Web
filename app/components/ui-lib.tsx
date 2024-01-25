@@ -86,7 +86,7 @@ export function Loading() {
         width: "100vw",
         display: "flex",
         alignItems: "center",
-        justifyContent: "center",
+        justifyContent:"center",
       }}
     >
       <LoadingIcon />

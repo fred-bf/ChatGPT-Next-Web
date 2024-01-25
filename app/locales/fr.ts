@@ -21,7 +21,11 @@ const fr: PartialLocaleType = {
       Retry: "Réessayer",
       Delete: "Supprimer",
       Pin: "Épingler",
-      PinToastContent: "Épingler 2 messages à des messages contextuels",
+      PinToastcontent: [{
+        type: "text",
+        text: "Épingler 2 messages à des messages contextuels"
+      }]
+      ,
       PinToastAction: "Voir",
       Edit: "Modifier",
     },
@@ -70,7 +74,11 @@ const fr: PartialLocaleType = {
   },
   Memory: {
     Title: "Prompt mémoire",
-    EmptyContent: "Rien encore.",
+    Emptycontent: [{
+      type: "text",
+      text: "Rien encore."
+    }]
+    ,
     Send: "Envoyer la mémoire",
     Copy: "Copier la mémoire",
     Reset: "Réinitialiser la session",

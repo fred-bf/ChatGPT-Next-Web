@@ -41,7 +41,11 @@ const no: PartialLocaleType = {
   },
   Memory: {
     Title: "Minneinstruks",
-    EmptyContent: "Ingen sålant.",
+    Emptycontent: [{
+      type: "text",
+      text: "Ingen sålant."
+    }]
+    ,
     Send: "Send minne",
     Copy: "Kopiere minne",
     Reset: "Nulstill sesjon",
